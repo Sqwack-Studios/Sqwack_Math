@@ -1,5 +1,8 @@
 #pragma once
-
+//  Swizzling refferences: "How to achieve vector swizzling in C++"
+//  https://stackoverflow.com/questions/51641131/how-to-achieve-vector-swizzling-in-c
+// 
+// Eric Lengyel, "Linear Algebra Upgraded": http://terathon.com/gdc18_lengyel.pdf
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //																																				  //
 //     ******This file contains all the work left to do in the math library. It will also contain all the requirements for the library*******	  //
@@ -9,10 +12,10 @@
 //                                                         *** Main Requirements / Design ***													  //
 //																																				  //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//																																				  //
-//           a) The library must support vector2, vector3, vector4 and matrix types from 2x2 up to 4x4, included non-square sizes				  //
-// 																																				  //
-//           b) For now, it will only support float types for computations.																		  //
+//                                                                                                                                                //
+//           a) The library must support vector2, vector3, vector4 and matrix types from 2x2 up to 4x4, included non-square sizes                 //
+//                                                                                                                                                //
+//           b) For now, it will only support float types for computations.                                                                       //
 // 																																				  //
 //           c) Vector and matrix types will be renamed following HLSL types: Vector2 -> float2, Vector3 -> float3...							  //
 //                                                                            Matrix2x2 -> float2x2, Matrix3x3 -> float3x3...					  //
@@ -29,45 +32,45 @@
 //               , reducing number of loads/unloads.																							  //
 // 																																				  //
 //           g) Support common operations in vector and matrices, as well as some common helper functions in computer graphics, like rotations,   //
-//              																																  //
+//                                                                                                                                                //
 //              lookAt matrix generation, handiness...																							  //
-//          																																	  //
-// 																																				  //
+//                                                                                                                                                //
+//                                                                                                                                                //
 //           e) Transform																														  //
-// 																																				  //
-// 																																				  //
-// 																																				  //
+//                                                                                                                                                //
+//                                                                                                                                                //
+//                                                                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                     																											  //
 //                                                        *** Once Main Requirements are met ***												  //
 //                    																															  //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////          																																  //
 //                                                                                                                                                //
-//            a) Plane																															  //
-// 																																				  //
-//            b) Sphere																															  //
-// 																																				  //
-//            c) Triangle																														  //
-// 																																				  //
-//            d) Cube, AABB...																													  //
-// 																																				  //
-//            e) Frustum																														  //
-// 																																				  //
-//            f) Ray																															  //
-//             																																	  //
-//              - f.1) Ray - Intersection algorithms																							  //
-// 																																				  //
-// 																																				  //
-//            g.2) Explore AVX-512 types: provide an interface that takes advantage of SoA. Vector/Matrix operations can be batched 			  //
-//                 in single AVX instructions, for example, an AVX-512 register is 16 float wide.												  //
-//                 You can compute up to four float4 operations, five float3 operations, and 8 float2 operations in								  //
-//                 the same instruction. I think that this can heavily improve computation-extensive algorithms like physics engines			  //
-//																																				  //
-//																																				  //
-//																																				  //
-//																																				  //
-//																																				  //
-//																																				  //
+//            a) Plane                                                                                                                            //
+//                                                                                                                                                //
+//            b) Sphere                                                                                                                           //
+//                                                                                                                                                //
+//            c) Triangle                                                                                                                         //
+//                                                                                                                                                //
+//            d) Cube, AABB...                                                                                                                    //
+//                                                                                                                                                //
+//            e) Frustum                                                                                                                          //
+//                                                                                                                                                //
+//            f) Ray                                                                                                                              //
+//                                                                                                                                                //
+//              - f.1) Ray - Intersection algorithms                                                                                              //
+//                                                                                                                                                //
+//                                                                                                                                                //
+//            g.2) Explore AVX-512 types: provide an interface that takes advantage of SoA. Vector/Matrix operations can be batched               //
+//                 in single AVX instructions, for example, an AVX-512 register is 16 float wide.                                                 //
+//                 You can compute up to four float4 operations, five float3 operations, and 8 float2 operations in                               //
+//                 the same instruction. I think that this can heavily improve computation-extensive algorithms like physics engines              //
+//                                                                                                                                                //
+//                                                                                                                                                //
+//                                                                                                                                                //
+//                                                                                                                                                //
+//                                                                                                                                                //
+//                                                                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////																																			  //
 
 
