@@ -7,7 +7,21 @@ workspace "sqwack_math"
 		"Release"
 	}
 
-	
+startproject "Sandbox"
+
+
+filter "configurations:Debug"
+    defines "_DEBUG"
+    symbols "on"
+
+filter "configurations:Release"
+    defines "_RELEASE"
+    optimize "Speed"
+    symbols "off"
+
+warnings "Everything"
+defines "SQ_MATH_SIMD"
+
 	
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
@@ -16,7 +30,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 project "sqwack_math"
 
 	location "sqwack_math"
-	kind "ConsoleApp"
+	kind "StaticLib"
 	language "C++"
 	cppdialect "C++20"
 
@@ -24,10 +38,6 @@ project "sqwack_math"
 	objdir("bin-int/" .. outputdir .. "/%{prj.name}")
 	debugdir ("bin/" .. outputdir .. "/%{prj.name}")
 
-
-	warnings "Everything"
-    defines "SQ_MATH_SIMD"
-	
 	files
 	{
 		"%{prj.name}/**.hpp",
@@ -45,19 +55,57 @@ project "sqwack_math"
 	}
 
 
-		filter "system:windows"
+	    filter "system:windows"
 
-		systemversion "latest"
-		staticruntime "on"
-		flags {"MultiProcessorCompile"}
+	    systemversion "latest"
+	    staticruntime "on"
+	    flags {"MultiProcessorCompile"}
 
 
 
-		filter "configurations:Debug"
-			defines "_DEBUG"
-			symbols "on"
 
-		filter "configurations:Release"
-		    defines "_RELEASE"
-		    optimize "Speed"
-			symbols "off"
+project "Sandbox"
+
+	location "Sandbox"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++20"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir("bin-int/" .. outputdir .. "/%{prj.name}")
+	debugdir ("bin/" .. outputdir .. "/%{prj.name}")
+
+
+
+	
+	files
+	{
+		"%{prj.name}/**.hpp",
+		"%{prj.name}/**.hh",
+		"%{prj.name}/**.hxx",
+		"%{prj.name}/**.h",
+
+		"%{prj.name}/**.cpp",
+		"%{prj.name}/**.c"
+	}
+
+	includedirs
+	{
+		"%{prj.name}/include"
+	}
+
+	links 
+	{
+		sqwack_math
+	}
+
+	    filter "system:windows"
+
+	    systemversion "latest"
+	    staticruntime "on"
+	    flags {"MultiProcessorCompile"}
+
+
+
+
+
