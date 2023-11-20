@@ -97,12 +97,15 @@ namespace sq::math
     template<typename traits, size_t size, size_t index>
     class nComponent
     {
-
     protected:
 
         using data_type = traits::data_type;
 
+    public:
+
         data_type data[size];
+
+
 
     };
 
