@@ -40,13 +40,18 @@ project "sqwack_math"
 
 	files
 	{
-		"%{prj.name}/**.hpp",
-		"%{prj.name}/**.hh",
-		"%{prj.name}/**.hxx",
-		"%{prj.name}/**.h",
+		"%{prj.name}/include/**.hpp",
+		"%{prj.name}/include/**.hh",
+		"%{prj.name}/include/**.hxx",
+		"%{prj.name}/include/**.h",
 
-		"%{prj.name}/**.cpp",
-		"%{prj.name}/**.c"
+		"%{prj.name}/export/%{prj.name}/**.hpp",
+		"%{prj.name}/export/%{prj.name}/**.hh",
+		"%{prj.name}/export/%{prj.name}/**.hxx",
+		"%{prj.name}/export/%{prj.name}/**.h",
+
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/src/**.c"
 	}
 
 	includedirs
@@ -91,7 +96,9 @@ project "Sandbox"
 
 	includedirs
 	{
-		"%{prj.name}/include"
+		"%{prj.name}/include",
+		"sqwack_math/export",
+		"sqwack_math/include"
 	}
 
 	links 

@@ -1,5 +1,7 @@
-#ifndef _SQ_MATH_BASE_TYPES_H_
-#define _SQ_MATH_BASE_TYPES_H_
+#ifndef _SQ_MATH_BASE_TYPES_HPP_
+#define _SQ_MATH_BASE_TYPES_HPP_
+
+#include <cstdint>
 
 //*********************************************************************************************************************************************************************************************//
 //            This file implements the base types used as containers, proxy and adaptors to build vector types and matrices                                                                    //
@@ -68,7 +70,7 @@
 //                                                                                                                                                                                             //
 //                             ________________                                                                                                                                                //
 //                            |                |                                                                                                                                               //
-//                            |                |    traits::data_type float                                                                                                                    //
+//                            |                |    traits::data_type float       (recommended reading: Effective C++, Item 47 "Use traits classes for information about types")                                                                                                             //
 //                            |     float2     |    traits::manager_type float2                                                                                                                //
 //                            |                |                                                                                                                                               //
 //                            |________________|                                                                                                                                               //
@@ -76,7 +78,40 @@
 //        this enables nComponent and Swizzle proxy to know the data they are saving. Also, it hints swizzle proxy which type it needs to transform during swizzle phase.                      //
 //        When some requests a .xy swizzle, it is being requested to the underlying nVector interface, which requests to the proxy. The proxy has to return a type, but not                    //
 //        a swizzle proxy type, or a nVector type, it has to return a float2 type. Thats why we need traits.                                                                                   //
+//                                                                                                                                                                                             //
+//                                                                                                                                                                                             //
+//        For matrices I'm not sure what I'm going to do, but I think traits or a policy system can help when using column/row convention                                                      //                           //
 //*********************************************************************************************************************************************************************************************//
 
 
-#endif //_SQ_MATH_BASE_TYPES_H_
+namespace sq::math
+{
+
+    template<typename mathType>      // template that will hold information about types
+    struct vector_traits
+    {
+        using mathematic_type = mathType::mathematic_type;  //represents the mathematical construct that manages dataType. i.e, a vector, a matrix that can perform operations
+        using data_type = mathType::data_type;
+    };
+
+    template<typename traits, size_t size, size_t index>
+    class nComponent
+    {
+
+    protected:
+
+        using data_type = traits::data_type;
+
+        data_type data[size];
+
+    };
+
+ 
+
+
+
+
+
+
+}
+#endif //_SQ_MATH_BASE_TYPES_HPP_
