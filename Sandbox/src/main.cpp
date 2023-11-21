@@ -4,6 +4,6 @@ int main()
 {
 	sq::math::float2 hello;
 
-
 	return 0;
+
 }

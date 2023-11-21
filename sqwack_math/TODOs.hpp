@@ -3,6 +3,8 @@
 //  https://stackoverflow.com/questions/51641131/how-to-achieve-vector-swizzling-in-c
 // 
 // Eric Lengyel, "Linear Algebra Upgraded": http://terathon.com/gdc18_lengyel.pdf
+// 
+// I've seen some libraries like https://github.com/gwiazdorrr/CxxSwizzle and it's just so hard to read modern c++
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                                                                //
 //     ******This file contains all the work left to do in the math library. It will also contain all the requirements for the library*******     //
@@ -35,8 +37,9 @@
 //                                                                                                                                                //
 //              lookAt matrix generation, handiness...                                                                                            //
 //                                                                                                                                                //
+//           e) Memory model and math convention is column-major                                                                                  //
 //                                                                                                                                                //
-//           e) Transform                                                                                                                         //
+//           f) Transform                                                                                                                         //
 //                                                                                                                                                //
 //                                                                                                                                                //
 //                                                                                                                                                //

@@ -11,7 +11,7 @@
 //            a) When swizzling, we don't want to copy everytime we swizzle. Imagine the following situation:                                                                                  //
 //                                                                                                                                                                                             //
 //                                                                                                                                                                                             //
-//               float2 dir { 1.0f, 0.0f};                                                                                                                                                     //
+//               float2 dir { 1.0f, 0.0f };                                                                                                                                                     //
 //               float2 opp;                                                                                                                                                                   //
 //                                                                                                                                                                                             //
 //               opp = dir.xy; // in this case yes, we want to copy.                                                                                                                           //
@@ -86,33 +86,86 @@
 
 namespace sq::math
 {
-
+    
     template<typename mathType>      // template that will hold information about types
     struct vector_traits
     {
-        using mathematic_type = mathType::mathematic_type;  //represents the mathematical construct that manages dataType. i.e, a vector, a matrix that can perform operations
-        using data_type = mathType::data_type;
+        using mathematic_type = mathType::traits::mathematic_type;  //represents the mathematical construct that manages dataType. i.e, a vector, a matrix that can perform operations
+        using data_type = mathType::traits::data_type;
     };
 
-    template<typename traits, size_t size, size_t index>
+
+    template<typename dataType, size_t size, size_t index>
     class nComponent
     {
-    protected:
-
-        using data_type = traits::data_type;
-
     public:
+        using data_type = dataType;
 
         data_type data[size];
-
-
-
     };
 
+    template<typename dataType, typename mathType, size_t size, size_t ... indices>
+    class SwizzleProxy
+    {
+    public:
+        using data_type = dataType;
+        using mathematic_type = mathType;
+
+        data_type data[size];
+    };
  
+    template<typename type_traits>
+    class vector2
+    {
+    public:
+        using traits = type_traits;
 
+        using data_type = traits::data_type;
+        using mathematic_type = traits::mathematic_type;
 
+        static constexpr size_t length{ 2u };
+        union //union that represents: each component of the vector, and each swizzle combination
+        {
+            nComponent<data_type, length, 0u> x;
+            nComponent<data_type, length, 1u> y;
 
+            SwizzleProxy<data_type, mathematic_type, 2u, 0u, 1u> xy;
+            SwizzleProxy<data_type, mathematic_type, 2u, 1u, 0u> yx;
+
+            //Add repetition proxies?
+
+        };
+    };
+
+    template<typename traits>
+    class vector3
+    {
+        using data_type = traits::data_type;
+        using mathematic_type = traits::math_type;
+
+        static constexpr size_t length{ 3u };
+
+        union
+        {
+            nComponent<data_type, length, 0> x;
+            nComponent<data_type, length, 1> y;
+            nComponent<data_type, length, 2> z;
+
+            SwizzleProxy<data_type, mathematic_type, 2, 0, 1> xy;
+            SwizzleProxy<data_type, mathematic_type, 2, 1, 0> yx;
+            SwizzleProxy<data_type, mathematic_type, 2, 0, 2> xz;
+            SwizzleProxy<data_type, mathematic_type, 2, 2, 0> zx;
+            SwizzleProxy<data_type, mathematic_type, 2, 1, 2> yz;
+            SwizzleProxy<data_type, mathematic_type, 2, 2, 1> zy;
+
+            SwizzleProxy<data_type, mathematic_type, 3, 0, 1, 2> xyz;
+            SwizzleProxy<data_type, mathematic_type, 3, 1, 0, 2> yxz;
+            SwizzleProxy<data_type, mathematic_type, 3, 1, 2, 0> yzx;
+            SwizzleProxy<data_type, mathematic_type, 3, 2, 1, 0> xzy;
+            SwizzleProxy<data_type, mathematic_type, 3, 2, 0, 1> zxy;
+            SwizzleProxy<data_type, mathematic_type, 3, 2, 1, 0> zyx;
+        };
+    };
 
 
 

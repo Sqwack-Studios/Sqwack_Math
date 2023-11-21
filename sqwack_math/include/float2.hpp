@@ -7,10 +7,9 @@ namespace sq::math
 {
 
 
-    class float2 : public nComponent<float2_traits, 2, 0>
+    class float2 : public vector2<float2_traits>
     {
     public:
-        using traits = float2_traits;
 
 
     };
