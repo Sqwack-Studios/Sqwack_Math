@@ -102,6 +102,50 @@ namespace sq::math
         using data_type = dataType;
 
         data_type data[size];
+
+        operator data_type() const noexcept
+        {
+            return data[index];
+        }
+
+        operator data_type&() noexcept
+        {
+            return data[index];
+        }
+
+        const data_type* operator&() const noexcept
+        {
+            return &data[index];
+        }
+
+        data_type* operator&() noexcept
+        {
+            return &data[index];
+        }
+
+        nComponent& operator=(data_type rhs) noexcept
+        {
+            data[index] = rhs;
+            return *this;
+        }
+
+        //Assignment of components with the same size and index
+        nComponent& operator=(const nComponent& rhs) noexcept
+        {
+            data[index] = rhs.data[index];
+
+            return *this;
+        }
+
+        //Assignment of components with different size and index. This allows us to assign components without calling operator data_type()
+        template<size_t size, size_t idx>
+        nComponent& operator=(const nComponent<data_type, size, idx>& rhs) noexcept
+        {
+            data[index] = rhs.data[idx];
+
+            return *this;
+        }
+
     };
 
     template<typename dataType, typename mathType, size_t size, size_t ... indices>
@@ -140,8 +184,9 @@ namespace sq::math
     template<typename traits>
     class vector3
     {
+    public:
         using data_type = traits::data_type;
-        using mathematic_type = traits::math_type;
+        using mathematic_type = traits::mathematic_type;
 
         static constexpr size_t length{ 3u };
 
