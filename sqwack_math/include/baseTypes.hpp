@@ -2,6 +2,7 @@
 #define _SQ_MATH_BASE_TYPES_HPP_
 
 #include <cstdint>
+#include "typeTraits.hpp"
 
 //*********************************************************************************************************************************************************************************************//
 //            This file implements the base types used as containers, proxy and adaptors to build vector types and matrices                                                                    //
@@ -84,17 +85,9 @@
 //*********************************************************************************************************************************************************************************************//
 
 
-namespace sq::math
+namespace sqm
 {
     
-    template<typename mathType>      // template that will hold information about types
-    struct vector_traits
-    {
-        using mathematic_type = mathType::traits::mathematic_type;  //represents the mathematical construct that manages dataType. i.e, a vector, a matrix that can perform operations
-        using data_type = mathType::traits::data_type;
-    };
-
-
     template<typename dataType, size_t size, size_t index>
     class nComponent
     {
@@ -103,21 +96,25 @@ namespace sq::math
 
         data_type data[size];
 
+        //Implicit conversion between component and underlying data type
         operator data_type() const noexcept
         {
             return data[index];
         }
 
+        //Implicit reference conversion between component and underlying data type
         operator data_type&() noexcept
         {
             return data[index];
         }
 
+        //Reference operator that returns not the component, but the underlying data type
         const data_type* operator&() const noexcept
         {
             return &data[index];
         }
 
+        //Reference operator that returns not the component, but the underlying data type
         data_type* operator&() noexcept
         {
             return &data[index];
@@ -158,14 +155,25 @@ namespace sq::math
         data_type data[size];
     };
  
-    template<typename type_traits>
-    class vector2
+
+    template<size_t length, typename dataType>
+    class vectorN;
+
+
+
+
+    template<typename dataType> using vector2 = vectorN<2, dataType>;
+    template<typename dataType> using vector3 = vectorN<3, dataType>;
+    template<typename dataType> using vector4 = vectorN<4, dataType>;
+
+
+    template<typename dataType>
+    class vectorN<2, dataType>
     {
     public:
-        using traits = type_traits;
-
-        using data_type = traits::data_type;
-        using mathematic_type = traits::mathematic_type;
+        using traits = vector_traits<dataType>;
+        using data_type = dataType;
+        using mathematic_type = traits::vector2_type;
 
         static constexpr size_t length{ 2u };
         union //union that represents: each component of the vector, and each swizzle combination
@@ -173,28 +181,38 @@ namespace sq::math
             nComponent<data_type, length, 0u> x;
             nComponent<data_type, length, 1u> y;
 
+            nComponent<data_type, length, 0u> r;
+            nComponent<data_type, length, 1u> g;
+
+            //Space coords
             SwizzleProxy<data_type, mathematic_type, 2u, 0u, 1u> xy;
             SwizzleProxy<data_type, mathematic_type, 2u, 1u, 0u> yx;
 
+            //Color coords
+            SwizzleProxy<data_type, mathematic_type, 2u, 0u, 1u> rg;
+            SwizzleProxy<data_type, mathematic_type, 2u, 1u, 0u> gb;
             //Add repetition proxies?
 
         };
     };
 
-    template<typename traits>
-    class vector3
+    template<typename dataType>
+    class vectorN<3, dataType>
     {
     public:
-        using data_type = traits::data_type;
-        using mathematic_type = traits::mathematic_type;
+        using traits = vector_traits<dataType>;
+        using data_type = dataType;
+        using mathematic_type = traits::vector3_type;
 
         static constexpr size_t length{ 3u };
 
         union
         {
+            //Space coords components//
             nComponent<data_type, length, 0> x;
             nComponent<data_type, length, 1> y;
             nComponent<data_type, length, 2> z;
+
 
             SwizzleProxy<data_type, mathematic_type, 2, 0, 1> xy;
             SwizzleProxy<data_type, mathematic_type, 2, 1, 0> yx;
@@ -209,6 +227,25 @@ namespace sq::math
             SwizzleProxy<data_type, mathematic_type, 3, 2, 1, 0> xzy;
             SwizzleProxy<data_type, mathematic_type, 3, 2, 0, 1> zxy;
             SwizzleProxy<data_type, mathematic_type, 3, 2, 1, 0> zyx;
+
+            //Color space components//
+            nComponent<data_type, length, 0> r;
+            nComponent<data_type, length, 1> g;
+            nComponent<data_type, length, 2> b;
+
+            SwizzleProxy<data_type, mathematic_type, 2, 0, 1> rg;
+            SwizzleProxy<data_type, mathematic_type, 2, 1, 0> gr;
+            SwizzleProxy<data_type, mathematic_type, 2, 0, 2> rb;
+            SwizzleProxy<data_type, mathematic_type, 2, 2, 0> br;
+            SwizzleProxy<data_type, mathematic_type, 2, 1, 2> gb;
+            SwizzleProxy<data_type, mathematic_type, 2, 2, 1> bg;
+
+            SwizzleProxy<data_type, mathematic_type, 3, 0, 1, 2> rgb;
+            SwizzleProxy<data_type, mathematic_type, 3, 1, 0, 2> grb;
+            SwizzleProxy<data_type, mathematic_type, 3, 1, 2, 0> gbr;
+            SwizzleProxy<data_type, mathematic_type, 3, 2, 1, 0> rbg;
+            SwizzleProxy<data_type, mathematic_type, 3, 2, 0, 1> brg;
+            SwizzleProxy<data_type, mathematic_type, 3, 2, 1, 0> bgr;
         };
     };
 
