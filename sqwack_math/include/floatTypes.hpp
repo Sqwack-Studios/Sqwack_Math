@@ -4,19 +4,13 @@
 
 namespace sqm
 {
-    //TODO: This is unnecessary
-    class float2 : public vector2<float>
-    {
-    public:
 
+    using float2 = vector2<float>;
+    using float3 = vector3<float>;
+    using float4 = vector4<float>;
 
-    };
+    GENERATE_TRAITS(float, float);
 
-    class float3 : public vector3<float>
-    {
-    public:
-
-    };
 }
 
 

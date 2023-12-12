@@ -5,9 +5,10 @@
 
 namespace sqm
 {
-    
+    //TODO: Implement this. Needs SIMD data first.
+
     template<size_t size, typename dataType>
-    dataType dot(const vectorN<size, dataType>& a, const vectorN<size, dataType>& b);
+    dataType dot(const vector<size, dataType>& a, const vector<size, dataType>& b);
 
 
     template<typename dataType>
@@ -17,19 +18,23 @@ namespace sqm
     vector3<dataType> crossRH(const vector3<dataType>& a, const vector3<dataType>& b);
 
     template<size_t size, typename dataType>
-    dataType distance(const vectorN<size, dataType>& a, const vectorN<size, dataType>& b);
+    dataType distance(const vector<size, dataType>& a, const vector<size, dataType>& b);
 
     template<size_t size, typename dataType>
-    dataType length(const vectorN<size, dataType>& a, const vectorN<size, dataType>& b);
+    dataType length(const vector<size, dataType>& a, const vector<size, dataType>& b);
 
     template<size_t size, typename dataType>
-    vectorN<size, dataType> normalize(const vectorN<size, dataType>& a);
+    vector<size, dataType> normalize(const vector<size, dataType>& a);
 
     template<size_t size, typename dataType>
-    vectorN<size, dataType> reflect(const vectorN<size, dataType>& incident, const vectorN<size, dataType>& normal);
+    vector<size, dataType> normalize(const vector<size, dataType>& a, dataType& outLength);
+
 
     template<size_t size, typename dataType>
-    vectorN<size, dataType> refract(const vectorN<size, dataType>& incident, const vectorN<size, dataType>& normal, float IOR);
+    vector<size, dataType> reflect(const vector<size, dataType>& incident, const vector<size, dataType>& normal);
+
+    template<size_t size, typename dataType>
+    vector<size, dataType> refract(const vector<size, dataType>& incident, const vector<size, dataType>& normal, float IOR);
 
 }
 

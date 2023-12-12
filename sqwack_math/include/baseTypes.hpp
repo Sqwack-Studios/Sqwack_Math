@@ -89,7 +89,7 @@ namespace sqm
 {
     
     template<typename dataType, size_t size, size_t index>
-    class nComponent
+    class nthComponent
     {
     public:
         using data_type = dataType;
@@ -120,14 +120,14 @@ namespace sqm
             return &data[index];
         }
 
-        nComponent& operator=(data_type rhs) noexcept
+        nthComponent& operator=(data_type rhs) noexcept
         {
             data[index] = rhs;
             return *this;
         }
 
         //Assignment of components with the same size and index
-        nComponent& operator=(const nComponent& rhs) noexcept
+        nthComponent& operator=(const nthComponent& rhs) noexcept
         {
             data[index] = rhs.data[index];
 
@@ -136,7 +136,7 @@ namespace sqm
 
         //Assignment of components with different size and index. This allows us to assign components without calling operator data_type()
         template<size_t size, size_t idx>
-        nComponent& operator=(const nComponent<data_type, size, idx>& rhs) noexcept
+        nthComponent& operator=(const nthComponent<data_type, size, idx>& rhs) noexcept
         {
             data[index] = rhs.data[idx];
 
@@ -157,32 +157,30 @@ namespace sqm
  
 
     template<size_t length, typename dataType>
-    class vectorN;
-
-
-
-
-    template<typename dataType> using vector2 = vectorN<2, dataType>;
-    template<typename dataType> using vector3 = vectorN<3, dataType>;
-    template<typename dataType> using vector4 = vectorN<4, dataType>;
+    class vector;
 
 
     template<typename dataType>
-    class vectorN<2, dataType>
+    class vector<2, dataType>
     {
     public:
         using traits = vector_traits<dataType>;
         using data_type = dataType;
         using mathematic_type = traits::vector2_type;
 
+        vector<2, data_type>() = default;
+        vector<2, data_type>(const vector<2, data_type>& rhs) = default;
+        vector<2, data_type>(data_type _x, data_type _y) { x = _x, y = _y; };
+        vector<2, data_type>(data_type all);
+
         static constexpr size_t length{ 2u };
         union //union that represents: each component of the vector, and each swizzle combination
         {
-            nComponent<data_type, length, 0u> x;
-            nComponent<data_type, length, 1u> y;
+            nthComponent<data_type, length, 0u> x;
+            nthComponent<data_type, length, 1u> y;
 
-            nComponent<data_type, length, 0u> r;
-            nComponent<data_type, length, 1u> g;
+            nthComponent<data_type, length, 0u> r;
+            nthComponent<data_type, length, 1u> g;
 
             //Space coords
             SwizzleProxy<data_type, mathematic_type, 2u, 0u, 1u> xy;
@@ -197,7 +195,7 @@ namespace sqm
     };
 
     template<typename dataType>
-    class vectorN<3, dataType>
+    class vector<3, dataType>
     {
     public:
         using traits = vector_traits<dataType>;
@@ -206,12 +204,18 @@ namespace sqm
 
         static constexpr size_t length{ 3u };
 
+
+        vector<3, dataType>() = default;
+        vector<3, dataType>(const vector<3, dataType>& rhs) = default;
+        vector<3, dataType>(data_type _x, data_type _y, data_type _z) { x = _x, y = _y, z = _z; };
+        vector<3, dataType>(data_type all);
+
         union
         {
             //Space coords components//
-            nComponent<data_type, length, 0> x;
-            nComponent<data_type, length, 1> y;
-            nComponent<data_type, length, 2> z;
+            nthComponent<data_type, length, 0> x;
+            nthComponent<data_type, length, 1> y;
+            nthComponent<data_type, length, 2> z;
 
 
             SwizzleProxy<data_type, mathematic_type, 2, 0, 1> xy;
@@ -229,9 +233,9 @@ namespace sqm
             SwizzleProxy<data_type, mathematic_type, 3, 2, 1, 0> zyx;
 
             //Color space components//
-            nComponent<data_type, length, 0> r;
-            nComponent<data_type, length, 1> g;
-            nComponent<data_type, length, 2> b;
+            nthComponent<data_type, length, 0> r;
+            nthComponent<data_type, length, 1> g;
+            nthComponent<data_type, length, 2> b;
 
             SwizzleProxy<data_type, mathematic_type, 2, 0, 1> rg;
             SwizzleProxy<data_type, mathematic_type, 2, 1, 0> gr;
@@ -248,6 +252,11 @@ namespace sqm
             SwizzleProxy<data_type, mathematic_type, 3, 2, 1, 0> bgr;
         };
     };
+
+
+    template<typename dataType> using vector2 = vector<2, dataType>;
+    template<typename dataType> using vector3 = vector<3, dataType>;
+    template<typename dataType> using vector4 = vector<4, dataType>;
 
 
 
