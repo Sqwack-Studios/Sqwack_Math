@@ -5,7 +5,7 @@
 
 namespace sqm
 {
-    //TODO: Implement this. Needs SIMD data first.
+    //TODO: Implement this.
 
     template<size_t size, typename dataType>
     dataType dot(const vector<size, dataType>& a, const vector<size, dataType>& b);
