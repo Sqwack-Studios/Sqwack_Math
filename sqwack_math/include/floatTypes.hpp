@@ -6,10 +6,10 @@ namespace sqm
 {
 
     using float2 = vector2<float>;
-    using float3 = vector3<float>;
-    using float4 = vector4<float>;
+    //using float3 = vector3<float>;
+    //using float4 = vector4<float>;
 
-    GENERATE_TRAITS(float, float);
+    //GENERATE_TRAITS(float, float);
 
 }
 

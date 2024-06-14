@@ -2,7 +2,7 @@
 #define _SQ_MATH_TYPE_TRAITS_HPP_
 
 #include <type_traits>
-
+#include <type_traits>
 
 
 namespace sqm

@@ -7,34 +7,34 @@ namespace sqm
 {
     //TODO: Implement this.
 
-    template<size_t size, typename dataType>
-    dataType dot(const vector<size, dataType>& a, const vector<size, dataType>& b);
+    template<size_t size, typename T>
+    T dot(const vector<size, T>& a, const vector<size, T>& b);
 
 
-    template<typename dataType>
-    vector3<dataType> crossLH(const vector3<dataType>& a, const vector3<dataType>& b);
-    
-    template<typename dataType>
-    vector3<dataType> crossRH(const vector3<dataType>& a, const vector3<dataType>& b);
+    //template<typename T>
+    //vector3<T> crossLH(const vector3<T>& a, const vector3<T>& b);
+    //
+    //template<typename T>
+    //vector3<T> crossRH(const vector3<T>& a, const vector3<T>& b);
 
-    template<size_t size, typename dataType>
-    dataType distance(const vector<size, dataType>& a, const vector<size, dataType>& b);
+    template<size_t size, typename T>
+    T distance(const vector<size, T>& a, const vector<size, T>& b);
 
-    template<size_t size, typename dataType>
-    dataType length(const vector<size, dataType>& a, const vector<size, dataType>& b);
+    template<size_t size, typename T>
+    T length(const vector<size, T>& a, const vector<size, T>& b);
 
-    template<size_t size, typename dataType>
-    vector<size, dataType> normalize(const vector<size, dataType>& a);
+    template<size_t size, typename T>
+    vector<size, T> normalize(const vector<size, T>& a);
 
-    template<size_t size, typename dataType>
-    vector<size, dataType> normalize(const vector<size, dataType>& a, dataType& outLength);
+    template<size_t size, typename T>
+    vector<size, T> normalize(const vector<size, T>& a, T& outLength);
 
 
-    template<size_t size, typename dataType>
-    vector<size, dataType> reflect(const vector<size, dataType>& incident, const vector<size, dataType>& normal);
+    template<size_t size, typename T>
+    vector<size, T> reflect(const vector<size, T>& incident, const vector<size, T>& normal);
 
-    template<size_t size, typename dataType>
-    vector<size, dataType> refract(const vector<size, dataType>& incident, const vector<size, dataType>& normal, float IOR);
+    template<size_t size, typename T>
+    vector<size, T> refract(const vector<size, T>& incident, const vector<size, T>& normal, float IOR);
 
 }
 

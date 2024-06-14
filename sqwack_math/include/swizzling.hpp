@@ -3,7 +3,6 @@
 
 #include <cstdint>
 #include "typeTraits.hpp"
-#include <deque>
 
 //*********************************************************************************************************************************************************************************************//
 //            This file implements the base types used as containers, proxy and adaptors to build vector types and matrices                                                                    //
@@ -88,178 +87,137 @@
 
 namespace sqm
 {
-    
-    template<typename dataType, size_t size, size_t index>
+    template<short ...sequence>
+    static constexpr bool is_ordered_sequence()
+    {
+        constexpr size_t size{ sizeof...(sequence) };
+        constexpr short data[size]{ sequence... };
+
+        for (size_t i = 1; i < size; ++i)
+        {
+            if (data[i - 1] >= data[i])
+                return false;
+        }
+        return true;
+    }
+
+    template<typename T, size_t size, size_t index>
     class nthComponent
     {
     public:
-        using data_type = dataType;
-
+        using data_type = T;
+    
         data_type data[size];
-
+    
         //Implicit conversion between component and underlying data type
         operator data_type() const noexcept
         {
             return data[index];
         }
+        
 
         //Implicit reference conversion between component and underlying data type
         operator data_type&() noexcept
         {
             return data[index];
         }
-
+    
         //Reference operator that returns not the component, but the underlying data type
         const data_type* operator&() const noexcept
         {
             return &data[index];
         }
-
+    
         //Reference operator that returns not the component, but the underlying data type
         data_type* operator&() noexcept
         {
             return &data[index];
         }
-
+    
         nthComponent& operator=(data_type rhs) noexcept
         {
             data[index] = rhs;
             return *this;
         }
-
+    
         //Assignment of components with the same size and index
         nthComponent& operator=(const nthComponent& rhs) noexcept
         {
             data[index] = rhs.data[index];
-
+    
             return *this;
         }
-
+    
         //Assignment of components with different size and index. This allows us to assign components without calling operator data_type()
         template<size_t size, size_t idx>
         nthComponent& operator=(const nthComponent<data_type, size, idx>& rhs) noexcept
         {
             data[index] = rhs.data[idx];
-
+    
             return *this;
         }
-
+    
     };
 
-    template<typename dataType, typename mathType, size_t size, size_t ... indices>
+
+    template<short... indexes>
+    static constexpr bool swizzle_copy_elidable{ is_ordered_sequence<indexes...>() };
+
+
+
+    template<short... indexes>
+    concept consecutive_swizzle = swizzle_copy_elidable<indexes...>;
+
+
+    template<size_t... indexes>
+    struct first_of_sequence;
+
+    template<size_t first, size_t... rest>
+    struct first_of_sequence<first, rest...>
+    {
+        static constexpr size_t value = first;
+    };
+
+
+
+    template<typename T, typename mathType, size_t size, size_t ... indexes>
     class SwizzleProxy
     {
     public:
-        using data_type = dataType;
+        using data_type = T;
         using mathematic_type = mathType;
 
         data_type data[size];
+
+        
+        
+        operator mathematic_type()                          requires(!consecutive_swizzle<indexes...>)
+        {
+            return mathematic_type(data[indexes]...);
+        }
+
+
+        operator const mathematic_type() const              requires(!consecutive_swizzle<indexes...>)
+        {
+            return mathematic_type(data[indexes]...);
+        }
+
+
+        operator mathematic_type&()                         requires(consecutive_swizzle<indexes...>)
+        {
+            return (reinterpret_cast<mathematic_type&>(data[first_of_sequence<indexes...>::value] ) );
+        }
+
+
+        operator const mathematic_type&()                   const requires(consecutive_swizzle<indexes...>)
+        {
+            return (reinterpret_cast<const mathematic_type&>(data[first_of_sequence<indexes...>::value] ) );
+        }
+
     };
  
 
-    template<size_t N, typename dataType>
-    class vector;
     
-
-
-    template<typename dataType>
-    class vector<2, dataType>
-    {
-    public:
-        using traits = vector_traits<dataType>;
-        using data_type = dataType;
-        using mathematic_type = traits::vector2_type;
-    
-        constexpr vector<2, data_type>() = default;
-        constexpr vector<2, data_type>(const vector<2, data_type>& rhs) = default;
-        constexpr vector<2, data_type>(data_type _x, data_type _y) : x(_x), y(_y) { };
-        constexpr vector<2, data_type>(data_type all) : x(all), y(all) { };
-    
-        static constexpr size_t length{ 2u };
-        union //union that represents: each component of the vector, and each swizzle combination
-        {
-            nthComponent<data_type, length, 0u> x;
-            nthComponent<data_type, length, 1u> y;
-    
-            nthComponent<data_type, length, 0u> r;
-            nthComponent<data_type, length, 1u> g;
-    
-            //Space coords
-            SwizzleProxy<data_type, traits::vector2_type, 2u, 0u, 1u> xy;
-            SwizzleProxy<data_type, traits::vector2_type, 2u, 1u, 0u> yx;
-    
-            //Color coords
-            SwizzleProxy<data_type, traits::vector2_type, 2u, 0u, 1u> rg;
-            SwizzleProxy<data_type, traits::vector2_type, 2u, 1u, 0u> gb;
-            //Add repetition proxies?
-    
-        };
-    };
-    
-    template<typename dataType>
-    class vector<3, dataType>
-    {
-    public:
-        using traits = vector_traits<dataType>;
-        using data_type = dataType;
-        using mathematic_type = traits::vector3_type;
-    
-        static constexpr size_t length{ 3u };
-    
-    
-        constexpr vector<3, dataType>() = default;
-        constexpr vector<3, dataType>(const vector<3, dataType>& rhs) = default;
-        constexpr vector<3, dataType>(data_type _x, data_type _y, data_type _z): x(x_), y(_y), z(_z) { x = _x, y = _y, z = _z; };
-        constexpr vector<3, dataType>(data_type all) : x(all), y(all), z(all) {};
-    
-        union
-        {
-            //Space coords components//
-            nthComponent<data_type, length, 0> x;
-            nthComponent<data_type, length, 1> y;
-            nthComponent<data_type, length, 2> z;
-    
-    
-            SwizzleProxy<data_type, traits::vector2_type, 2, 0, 1> xy;
-            SwizzleProxy<data_type, traits::vector2_type, 2, 1, 0> yx;
-            SwizzleProxy<data_type, traits::vector2_type, 2, 0, 2> xz;
-            SwizzleProxy<data_type, traits::vector2_type, 2, 2, 0> zx;
-            SwizzleProxy<data_type, traits::vector2_type, 2, 1, 2> yz;
-            SwizzleProxy<data_type, traits::vector2_type, 2, 2, 1> zy;
-    
-            SwizzleProxy<data_type, traits::vector3_type, 3, 0, 1, 2> xyz;
-            SwizzleProxy<data_type, traits::vector3_type, 3, 1, 0, 2> yxz;
-            SwizzleProxy<data_type, traits::vector3_type, 3, 1, 2, 0> yzx;
-            SwizzleProxy<data_type, traits::vector3_type, 3, 2, 1, 0> xzy;
-            SwizzleProxy<data_type, traits::vector3_type, 3, 2, 0, 1> zxy;
-            SwizzleProxy<data_type, traits::vector3_type, 3, 2, 1, 0> zyx;
-    
-            //Color space components//
-            nthComponent<data_type, length, 0> r;
-            nthComponent<data_type, length, 1> g;
-            nthComponent<data_type, length, 2> b;
-    
-            SwizzleProxy<data_type, traits::vector2_type, 2, 0, 1> rg;
-            SwizzleProxy<data_type, traits::vector2_type, 2, 1, 0> gr;
-            SwizzleProxy<data_type, traits::vector2_type, 2, 0, 2> rb;
-            SwizzleProxy<data_type, traits::vector2_type, 2, 2, 0> br;
-            SwizzleProxy<data_type, traits::vector2_type, 2, 1, 2> gb;
-            SwizzleProxy<data_type, traits::vector2_type, 2, 2, 1> bg;
-    
-            SwizzleProxy<data_type, traits::vector3_type, 3, 0, 1, 2> rgb;
-            SwizzleProxy<data_type, traits::vector3_type, 3, 1, 0, 2> grb;
-            SwizzleProxy<data_type, traits::vector3_type, 3, 1, 2, 0> gbr;
-            SwizzleProxy<data_type, traits::vector3_type, 3, 2, 1, 0> rbg;
-            SwizzleProxy<data_type, traits::vector3_type, 3, 2, 0, 1> brg;
-            SwizzleProxy<data_type, traits::vector3_type, 3, 2, 1, 0> bgr;
-        };
-    };
-
-
-    template<typename dataType> using vector2 = vector<2, dataType>;
-    template<typename dataType> using vector3 = vector<3, dataType>;
-    template<typename dataType> using vector4 = vector<4, dataType>;
-
 
 
 }
